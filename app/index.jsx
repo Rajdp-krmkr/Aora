@@ -10,9 +10,10 @@ export default function App() {
       <View style={styles.container}>
         <Text className="">hello</Text>
         <StatusBar style="auto" />
-        <Link href="/profile" style={{ color: "skyblue", fontSize: 30 }}>
+        <Link href="/profile" className="text-2xl text-blue-300">
           Go to Profile{" "}
         </Link>
+        <Text className=" text-red-500">hio</Text>
       </View>
     </>
   );
