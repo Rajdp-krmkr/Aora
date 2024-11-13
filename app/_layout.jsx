@@ -10,7 +10,7 @@ import "../global.css";
 SplashScreen.preventAutoHideAsync();
 
 const RootLayout = () => {
-  const { fontsLoaded, error } = useFonts({
+  const [fontsLoaded, error] = useFonts({
     "Poppins-Black": require("../assets/fonts/Poppins-Black.ttf"),
     "Poppins-Bold": require("../assets/fonts/Poppins-Bold.ttf"),
     "Poppins-ExtraBold": require("../assets/fonts/Poppins-ExtraBold.ttf"),
@@ -33,6 +33,7 @@ const RootLayout = () => {
   //     </SafeAreaView>
   //   </>
   // );
+  
   useEffect(() => {
     if (error) throw error;
     if (fontsLoaded) SplashScreen.hideAsync();

@@ -8,10 +8,10 @@ export default function App() {
   return (
     <>
       <View style={styles.container}>
-        <Text className="">hello</Text>
+        <Text className="text-4xl font-pbold">Aora!</Text>
         <StatusBar style="auto" />
-        <Link href="/home" className="text-2xl text-blue-300">
-          Go to Home{" "}
+        <Link href="/home" className="text-lg text-blue-300">
+          Go to Home
         </Link>
         <Text className=" text-red-500">hio</Text>
       </View>
