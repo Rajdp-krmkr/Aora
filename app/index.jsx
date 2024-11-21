@@ -40,7 +40,7 @@ export default function App() {
           </Text>
           <CustomButton
             handlePress={() => {
-              router.push("/sign-up");
+              router.push("/sign-in");
             }}
             containerStyles="mt-7 w-full"
           >
