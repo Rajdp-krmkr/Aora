@@ -12,57 +12,30 @@ import { images } from "../../constants";
 import SearchInput from "../../components/SearchInput";
 import Trending from "../../components/Trending";
 import EmptyState from "../../components/EmptyState";
-import { getAllPosts } from "../../lib/firebaseConfig";
+import { getAllPosts, getLatestPosts } from "../../lib/firebaseConfig";
+import useFirebase from "../../lib/useFirebase";
+import VideoCard from "../../components/VideoCard";
 
 const Home = () => {
-  const [data, setData] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const { data: posts, isLoading, reFetch } = useFirebase(getAllPosts);
+  const { data: LatestPosts } = useFirebase(getLatestPosts);
   const [refreshing, setRefreshing] = useState(false);
-
   const onRefresh = async () => {
     setRefreshing(true);
-    // recall posts and videos ...
+    await reFetch();
     setRefreshing(false);
   };
-  useEffect(() => {
-    const fetchData = async () => {
-      setIsLoading(true);
-      // try {
-      //   const response = await getAllPosts();
-      //   // console.log("response", response);
-      //   setData("response", response);
-      // } catch (error) {
-      //   Alert.alert("Error", error.message);
-      //   console.error(error);
-      // } finally {
-      //   setIsLoading(false);
-      // }
-      await getAllPosts()
-        .then((response) => {
-          console.log("response", response);
-          setData(response);
-        })
-        .catch((error) => {
-          Alert.alert("Error", error.message);
-          console.error(error);
-        })
-        .finally(() => {
-          setIsLoading(false);
-        });
-    };
-    fetchData();
-  }, []);
 
   return (
     <SafeAreaView className="bg-primary h-full">
       <FlatList
-        data={[{ $id: 1 }, { $id: 2 }, { $id: 3 }, { $id: 4 }, { $id: 5 }]}
+        data={posts}
         // data={[]}
-        keyExtractor={(item) => item.$id}
+        keyExtractor={(item) => item.video}
         renderItem={({ item, index }) => (
-          <Text className="text-white" key={item.$id}>
-            {item.$id}
-          </Text>
+          <View key={index}>
+            <VideoCard video={item} />
+          </View>
         )}
         ListHeaderComponent={() => (
           <View className="my-6 px-4 space-y-6">
@@ -88,18 +61,7 @@ const Home = () => {
               <Text className="text-gray-100 text-lg font-pregular mb-3">
                 Latest Videos
               </Text>
-              <Trending
-                posts={
-                  [
-                    { $id: 1 },
-                    { $id: 2 },
-                    { $id: 3 },
-                    { $id: 4 },
-                    { $id: 5 },
-                    { $id: 6 },
-                  ] ?? []
-                }
-              />
+              <Trending posts={LatestPosts ?? []} />
             </View>
           </View>
         )}
