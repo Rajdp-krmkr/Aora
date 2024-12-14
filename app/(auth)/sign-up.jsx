@@ -6,7 +6,7 @@ import { Link, router } from "expo-router";
 import { images } from "../../constants";
 import CustomButton from "../../components/CustomButton";
 import FormField from "../../components/FormField";
-import { createUser } from "../../lib/appwrite";
+import { createUser } from "../../lib/firebaseConfig"; //TODO change
 
 const SignUp = () => {
   const [form, setform] = useState({
