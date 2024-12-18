@@ -1,7 +1,9 @@
-import { View, Text, Image, TouchableOpacity } from "react-native";
+import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
 import React, { useState } from "react";
 import { icons } from "../constants";
 import iconSet from "@expo/vector-icons/build/Fontisto";
+import { VideoView, useVideoPlayer } from "expo-video";
+import { useEvent } from "expo";
 
 const VideoCard = ({
   video: {
@@ -13,6 +15,15 @@ const VideoCard = ({
   },
 }) => {
   const [Play, setPlay] = useState(false);
+  const videoSource = video;
+
+  const player = useVideoPlayer(videoSource, (player) => {
+    player.loop = true;
+  });
+  const { isPlaying } = useEvent(player, "playingChange", {
+    isPlaying: player.playing,
+  });
+
   return (
     <View className="flex-col items-center px-4 mb-14">
       <View className="flex-row gap-3 items-start">
@@ -43,12 +54,21 @@ const VideoCard = ({
           <Image source={icons.menu} className="w-5 h-5" resizeMode="contain" />
         </View>
       </View>
-      {Play ? (
-        <Text className=" text-white">Playing</Text>
+      {isPlaying ? (
+        <VideoView
+          style={styles.video}
+          player={player}
+          resizeMode="contain"
+          allowsFullscreen
+          allowsPictureInPicture
+          className=""
+          nativeControls
+          contentFit="contain"
+        />
       ) : (
         <TouchableOpacity
           activeOpacity={0.7}
-          onPress={() => setPlay(true)}
+          onPress={() => player.play()}
           className="w-full h-60 rounded-xl mt-3 relative justify-center items-center"
         >
           <Image
@@ -68,3 +88,11 @@ const VideoCard = ({
 };
 
 export default VideoCard;
+const styles = StyleSheet.create({
+  video: {
+    height: 240,
+    width: "100%",
+    borderRadius: 35,
+    marginTop: 15,
+  },
+});

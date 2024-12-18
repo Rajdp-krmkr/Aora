@@ -5,12 +5,15 @@ import {
   TouchableOpacity,
   ImageBackground,
   Image,
+  StyleSheet,
 } from "react-native";
 import React, { useState } from "react";
 import EmptyState from "./EmptyState";
 import * as Animatable from "react-native-animatable";
 import { icons } from "../constants";
 import { ResizeMode, Video } from "expo-av";
+import { useVideoPlayer, VideoView } from "expo-video";
+import { useEvent } from "expo";
 
 //TODO start from importing Video from expo-video
 
@@ -32,50 +35,56 @@ const zoomOut = {
 };
 
 const TrendingItem = ({ activeItem, item }) => {
-  const [play, setPlay] = useState(false);
-  // console.log("bal: ", item.video);
+  const videoSource = item.video;
+  // const [play, setPlay] = useState(false);
+
+  const player = useVideoPlayer(videoSource, (player) => {
+    player.loop = true;
+    // player.play();
+  });
+  const { isPlaying } = useEvent(player, "playingChange", {
+    isPlaying: player.playing,
+  });
+
   return (
     <Animatable.View
       className="mr-5"
-      animation={activeItem.video === item.video ? zoomIn : zoomOut}
-      duration={500}
+      animation={activeItem.thumbnail === item.thumbnail ? zoomIn : zoomOut}
+      duration={300}
     >
-      {play ? (
-        <Video
-          source={{ uri: item.video }}
-          className="w-52 h-72 rounded-[35px] mt-3 bg-white/10"
-          resizeMode={ResizeMode.CONTAIN}
-          useNativeControls
-          shouldPlay
-          onPlaybackStatusUpdate={(status) => {
-            if (status.didJustFinish) {
-              setPlay(false);
-            }
-          }}
-          onError={(error) => {
-            console.error("Video Error: ", error);
-          }}
-        />
-      ) : (
-        <TouchableOpacity
-          className="relative justify-center items-center"
-          activeOpacity={0.7}
-          onPress={() => {
-            setPlay(true);
-          }}
-        >
-          <ImageBackground
-            source={{ uri: item.thumbnail }}
-            className="w-52 h-72 rounded-[35px] my-5 overflow-hidden shadow-lg shadow-black/40"
-            resizeMode="cover"
-          />
-          <Image
-            source={icons.play}
-            className="w-12 h-12 absolute"
+      <View className="relative justify-center items-center">
+        {isPlaying ? (
+          <VideoView
+            style={styles.video}
+            player={player}
             resizeMode="contain"
+            allowsFullscreen
+            allowsPictureInPicture
+            className=""
+            nativeControls
+            contentFit="contain"
           />
-        </TouchableOpacity>
-      )}
+        ) : (
+          <TouchableOpacity
+            className="relative justify-center items-center"
+            activeOpacity={0.7}
+            onPress={() => {
+              player.play();
+            }}
+          >
+            <ImageBackground
+              source={{ uri: item.thumbnail }}
+              className="w-52 h-72 rounded-[35px] my-5 overflow-hidden shadow-lg shadow-black/40"
+              resizeMode="cover"
+            />
+            <Image
+              source={icons.play}
+              className="w-12 h-12 absolute"
+              resizeMode="contain"
+            />
+          </TouchableOpacity>
+        )}
+      </View>
     </Animatable.View>
   );
 };
@@ -90,7 +99,7 @@ const Trending = ({ posts }) => {
   return (
     <FlatList
       data={posts}
-      keyExtractor={(item) => item.video}
+      keyExtractor={(item) => item.thumbnail}
       renderItem={({ item }) => (
         <TrendingItem activeItem={activeItem} item={item} />
       )}
@@ -104,3 +113,11 @@ const Trending = ({ posts }) => {
 };
 
 export default Trending;
+const styles = StyleSheet.create({
+  video: {
+    height: 258,
+    width: 182,
+    borderRadius: 35,
+    marginTop: 15,
+  },
+});

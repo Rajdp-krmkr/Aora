@@ -31,7 +31,7 @@ const Home = () => {
       <FlatList
         data={posts}
         // data={[]}
-        keyExtractor={(item) => item.video}
+        keyExtractor={(item) => item.thumbnail}
         renderItem={({ item, index }) => (
           <View key={index}>
             <VideoCard video={item} />
