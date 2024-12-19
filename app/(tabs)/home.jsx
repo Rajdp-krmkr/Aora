@@ -20,6 +20,7 @@ const Home = () => {
   const { data: posts, isLoading, reFetch } = useFirebase(getAllPosts);
   const { data: LatestPosts } = useFirebase(getLatestPosts);
   const [refreshing, setRefreshing] = useState(false);
+  
   const onRefresh = async () => {
     setRefreshing(true);
     await reFetch();
@@ -30,7 +31,6 @@ const Home = () => {
     <SafeAreaView className="bg-primary h-full">
       <FlatList
         data={posts}
-        // data={[]}
         keyExtractor={(item) => item.thumbnail}
         renderItem={({ item, index }) => (
           <View key={index}>
