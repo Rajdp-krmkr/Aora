@@ -7,6 +7,7 @@ import { images } from "../../constants";
 import CustomButton from "../../components/CustomButton";
 import FormField from "../../components/FormField";
 import { createUser } from "../../lib/firebaseConfig";
+import { useGlobalContext } from "../../context/GlobalProvider";
 
 const SignUp = () => {
   const [form, setform] = useState({
@@ -14,7 +15,7 @@ const SignUp = () => {
     email: "",
     password: "",
   });
-
+  const { setUser, setIsLoggedin } = useGlobalContext();
   const [isSubmitting, setisSubmitting] = useState(false);
 
   const submit = async () => {
@@ -27,8 +28,10 @@ const SignUp = () => {
     // console.log(form.email, form.username, form.password);
 
     await createUser(form.email, form.password, form.username)
-      .then(() => {
+      .then((result) => {
         router.replace("/home");
+        setUser(result);
+        setIsLoggedin(true);
       })
       .catch((error) => {
         Alert.alert("Error", error.message);

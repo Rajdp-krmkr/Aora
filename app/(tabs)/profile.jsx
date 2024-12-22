@@ -37,11 +37,10 @@ const Profile = () => {
   const logout = () => {
     signOut(auth)
       .then(() => {
-        // Sign-out successful.
-        router.push("/(auth)");
+        router.replace("/sign-in");
       })
       .catch((error) => {
-        // An error happened.
+        Alert.alert("Error", error.message);
       });
   };
 

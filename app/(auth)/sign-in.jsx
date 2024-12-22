@@ -6,14 +6,23 @@ import { Link, router } from "expo-router";
 import { images } from "../../constants";
 import CustomButton from "../../components/CustomButton";
 import FormField from "../../components/FormField";
-import { auth, createUser, signIn } from "../../lib/firebaseConfig";
+import {
+  auth,
+  createUser,
+  getCurrentUser,
+  signIn,
+} from "../../lib/firebaseConfig";
 import { sendSignInLinkToEmail } from "firebase/auth";
+import { useGlobalContext } from "../../context/GlobalProvider";
+import { SemanticClassificationFormat } from "typescript";
 
 const SignIn = () => {
   const [form, setform] = useState({
     email: "",
     password: "",
   });
+
+  const { setUser, setIsLoggedin } = useGlobalContext();
 
   const [isSubmitting, setisSubmitting] = useState(false);
 
@@ -27,6 +36,12 @@ const SignIn = () => {
     await signIn(form.email, form.password)
       .then(() => {
         console.log("User Signed In");
+        async function setCurrentUser() {
+          const result = await getCurrentUser();
+          setUser(result);
+          setIsLoggedin(true);
+        }
+        setCurrentUser();
         router.replace("/home");
         //TODO set it to global state...
       })
