@@ -6,7 +6,7 @@ import { Link, router } from "expo-router";
 import { images } from "../../constants";
 import CustomButton from "../../components/CustomButton";
 import FormField from "../../components/FormField";
-import { createUser } from "../../lib/firebaseConfig"; //TODO change
+import { createUser } from "../../lib/firebaseConfig";
 
 const SignUp = () => {
   const [form, setform] = useState({
@@ -16,6 +16,7 @@ const SignUp = () => {
   });
 
   const [isSubmitting, setisSubmitting] = useState(false);
+
   const submit = async () => {
     if (form.username === "" || form.email === "" || form.password === "") {
       Alert.alert("Error", "Please fill all fields");
@@ -25,17 +26,18 @@ const SignUp = () => {
     setisSubmitting(true);
     // console.log(form.email, form.username, form.password);
 
-    try {
-      const result = await createUser(form.email, form.password, form.username);
+    await createUser(form.email, form.password, form.username)
+      .then(() => {
+        router.replace("/home");
+      })
+      .catch((error) => {
+        Alert.alert("Error", error.message);
+      })
+      .finally(() => {
+        setisSubmitting(false);
+      });
 
-      //TODO set it to global state...
-
-      router.replace("/home");
-    } catch (error) {
-      Alert.alert("Error", error.message);
-    } finally {
-      setisSubmitting(false);
-    }
+    //TODO set it to global state...
   };
 
   return (

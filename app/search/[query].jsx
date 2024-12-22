@@ -1,18 +1,8 @@
-import {
-  View,
-  Text,
-  FlatList,
-  Image,
-  RefreshControl,
-  Alert,
-} from "react-native";
+import { View, Text, FlatList, Alert } from "react-native";
 import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { images } from "../../constants";
 import SearchInput from "../../components/SearchInput";
-import Trending from "../../components/Trending";
 import EmptyState from "../../components/EmptyState";
-import { getAllPosts, getLatestPosts } from "../../lib/firebaseConfig";
 import VideoCard from "../../components/VideoCard";
 import useFirebase from "../../lib/useFirebase";
 
@@ -30,13 +20,13 @@ const query = () => {
     if (query != "") {
       SearchPosts()
         .then((data) => {
+          let arr = [];
           data.forEach((doc) => {
-            doc.title.split(" ").map((word) => {
-              if (word.toLowerCase() === query.toLowerCase()) {
-                setSearchPostsArray((prev) => [...prev, doc]);
-              }
-            });
+            if (doc.title.toLowerCase().includes(query.toLowerCase())) {
+              arr.push(doc);
+            }
           });
+          setSearchPostsArray(arr);
         })
         .catch((err) => {
           console.error("Error fetching search results: ", err);

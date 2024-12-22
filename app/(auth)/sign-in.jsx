@@ -6,7 +6,8 @@ import { Link, router } from "expo-router";
 import { images } from "../../constants";
 import CustomButton from "../../components/CustomButton";
 import FormField from "../../components/FormField";
-import { createUser } from "../../lib/firebaseConfig";
+import { auth, createUser, signIn } from "../../lib/firebaseConfig";
+import { sendSignInLinkToEmail } from "firebase/auth";
 
 const SignIn = () => {
   const [form, setform] = useState({
@@ -23,19 +24,19 @@ const SignIn = () => {
     }
 
     setisSubmitting(true);
-    // console.log(form.email, form.username, form.password);
-
-    try {
-      const result = await createUser(form.email, form.password, form.username);
-
-      //TODO set it to global state...
-
-      router.replace("/home");
-    } catch (error) {
-      Alert.alert("Error", error.message);
-    } finally {
-      setisSubmitting(false);
-    }
+    await signIn(form.email, form.password)
+      .then(() => {
+        console.log("User Signed In");
+        router.replace("/home");
+        //TODO set it to global state...
+      })
+      .catch((error) => {
+        Alert.alert("Error", error.message);
+        console.log("Error", error.message);
+      })
+      .finally(() => {
+        setisSubmitting(false);
+      });
   };
 
   return (

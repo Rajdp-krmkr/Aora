@@ -15,12 +15,14 @@ import EmptyState from "../../components/EmptyState";
 import { getAllPosts, getLatestPosts } from "../../lib/firebaseConfig";
 import useFirebase from "../../lib/useFirebase";
 import VideoCard from "../../components/VideoCard";
+import { useGlobalContext } from "../../context/GlobalProvider";
 
 const Home = () => {
+  const { user } = useGlobalContext();
   const { data: posts, isLoading, reFetch } = useFirebase(getAllPosts);
   const { data: LatestPosts } = useFirebase(getLatestPosts);
   const [refreshing, setRefreshing] = useState(false);
-  
+
   const onRefresh = async () => {
     setRefreshing(true);
     await reFetch();
@@ -45,7 +47,7 @@ const Home = () => {
                   Welcome Back
                 </Text>
                 <Text className="font-psemibold text-2xl text-white">
-                  Username
+                  {user?.username}
                 </Text>
               </View>
               <View className="mt-1.5">
