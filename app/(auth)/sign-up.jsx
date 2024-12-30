@@ -29,18 +29,19 @@ const SignUp = () => {
 
     await createUser(form.email, form.password, form.username)
       .then((result) => {
-        router.replace("/home");
         setUser(result);
+        console.log(result);
         setIsLoggedin(true);
+        console.log("user created succesfully");
+        router.replace("/home");
       })
       .catch((error) => {
+        console.error("error in creating user", err);
         Alert.alert("Error", error.message);
       })
       .finally(() => {
         setisSubmitting(false);
       });
-
-    //TODO set it to global state...
   };
 
   return (
